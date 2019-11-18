@@ -197,9 +197,12 @@ app.post("/createNote/:id", function (req, res) {
             new: true
         });
     }).then(function (dbArticle) {
-        res.json(dbArticle);
-    }).catch(function (err) {
-        res.json(err);
+        //res.json(dbArticle);
+        res.render("saved", {
+            notes: dbArticle
+        }).catch(function (err) {
+            res.json(err);
+        });
     });
 });
 // Delete a note
