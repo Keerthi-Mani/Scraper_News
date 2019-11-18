@@ -43,7 +43,7 @@ app.engine("handlebars", exphbs({
 app.set("view engine", "handlebars");
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/scraper_news", {
+mongoose.connect("mongodb://user:password1@ds061631.mlab.com:61631/heroku_cxjr7cw4", {
     useNewUrlParser: true
 });
 
@@ -53,15 +53,14 @@ mongoose.connect("mongodb://localhost/scraper_news", {
 app.get("/", function (req, res) {
     Article.find({
         "saved": false
-    }).then(
-        function (dbArticle) {
-            res.render("home", {
-                article: dbArticle
-            }).catch(function (err) {
-                // If an error occurred, log it
-                console.log(err);
-            });
-        });
+    }).then(function (dbArticle) {
+        res.render("home", {
+            article: dbArticle
+        })
+    }).catch(function (err) {
+        // If an error occurred, log it
+        console.log(err);
+    });
 });
 //GET request for saved article to render Handlebars pages
 app.get("/saved", function (req, res) {
@@ -70,12 +69,13 @@ app.get("/saved", function (req, res) {
     }).populate("notes").then(function (dbArticle) {
         res.render("saved", {
             article: dbArticle
-        }).catch(function (err) {
-            // If an error occurred, log it
-            console.log(err);
-        });
+        })
+    }).catch(function (err) {
+        // If an error occurred, log it
+        console.log(err);
     });
 });
+
 // A GET route for scraping the echoJS website
 app.get("/scrape", function (req, res) {
     // First, we grab the body of the html with axios
@@ -153,7 +153,7 @@ app.get("/articles/:id", function (req, res) {
 app.post("/saveArticles/:id", function (req, res) {
 
     // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-    Article.findOneAndUpdate({
+    Article.updateOne({
         _id: req.params.id
     }, {
         saved: true
@@ -170,7 +170,7 @@ app.post("/saveArticles/:id", function (req, res) {
 app.post("/deleteArticles/:id", function (req, res) {
 
     // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-    Article.findOneAndUpdate({
+    Article.deleteOne({
         _id: req.params.id
     }, {
         saved: false,
@@ -186,45 +186,66 @@ app.post("/deleteArticles/:id", function (req, res) {
 
 // Create a new note
 app.post("/createNote/:id", function (req, res) {
-    Note.create(req.body).then(function (dbNote) {
-        return Article.findOneAndUpdate({
-            _id: req.params.id
-        }, {
-            $push: {
-                note: dbNote._id
-            }
-        }, {
-            new: true
-        });
-    }).then(function (dbArticle) {
-        //res.json(dbArticle);
-        res.render("saved", {
-            notes: dbArticle
-        }).catch(function (err) {
-            res.json(err);
-        });
+    var newNote = new Note({
+        body: req.body.text,
+        article: req.params.id
+    });
+    newNote.save(function (err, dbNote) {
+        if (err) {
+            console.log(err);
+        } else
+            Article.updateOne({
+                _id: req.params.id
+            }, {
+                $push: {
+                    notes: dbNote
+                }
+            }).then(function (err) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.send(note);
+                }
+                // //res.json(dbArticle);
+                // res.render("saved", {
+                //     article: dbArticle
+                // }).catch(function (err) {
+                //     res.json(err);
+                //});
+            });
     });
 });
 // Delete a note
-app.delete("/deleteNote/:id", function (req, res) {
+app.delete("/deleteNote/:note_id/:article_id", function (req, res) {
     // Use the note id to find and delete it
-    Note.findOneAndRemove({
-            _id: req.params.note_id
-        }).then(function (dbNote) {
-            return Article.findOneAndUpdate({
-                note: req.params.id
-            }, {
-                $pull: [{
-                    note: req.params.id
-                }]
-            });
-        })
-        // Execute the above query
-        .then(function (dbArticle) {
-            res.json(dbArticle);
-        }).catch(function (err) {
-            res.json(err);
+    Note.remove({
+        _id: req.params.note_id
+    }).then(function (err) {
+        if (err) {
+            console.log(err);
+        }
+        Article.deleteOne({
+            _id: req.params.article_id
+        }, {
+            $pull: [{
+                notes: req.params.note_id
+            }]
+            // Execute the above query
+        }).then(function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.send(note);
+            }
+            //     res.render("saved", {
+            //         article: dbArticle
+            //     }).catch(function (err) {
+            //         res.json(err);
+            //     });
+
         });
+    });
+
 });
 
 // Start the server

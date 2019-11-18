@@ -66,7 +66,7 @@ $(".deleteNote").on("click", function () {
     var articleId = $(this).attr("data-article-id");
     $.ajax({
         method: "DELETE",
-        url: "/deleteNote/" + thisId
+        url: "deleteNote/" + noteId + "/" + articleId
     }).done(function (data) {
         console.log(data)
         $(".modalNote").modal("hide");
