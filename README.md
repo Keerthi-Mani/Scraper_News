@@ -1,5 +1,5 @@
 ## Overview
-An app that scrapes articles from the New York Times website and lets users save articles and leave comments on the latest news.
+An app that scrapes articles from the [New York Times](https://www.nytimes.com/) website and lets users save articles and leave comments on the latest news.
 
 ## How It Works
 - Scrape articles by clicking the "Scrape Articles" button.
@@ -9,11 +9,11 @@ An app that scrapes articles from the New York Times website and lets users save
 - Saved articles can be deleted by clicking the "Delete" button.
 
 ## Technologies Used
-* Node.js
-* Express.js
-* Handlebars.js
-* MongoDB
-* Mongoose
+* [Node.js](https://nodejs.org/en/)
+* [Express.js](https://www.npmjs.com/package/express)
+* [Handlebars.js](https://www.npmjs.com/package/handlebars)
+* [MongoDB](https://www.mongodb.com/)
+* [Mongoose](https://mongoosejs.com/docs/index.html)
 * npm packages
     - body-parser
     - express
