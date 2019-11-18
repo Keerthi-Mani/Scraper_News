@@ -22,5 +22,10 @@ An app that scrapes articles from the New York Times website and lets users save
     - cheerio
     - request
 
+## Screenshot
+<img width="1174" alt="Screen Shot 2019-11-17 at 8 38 53 PM" src="https://user-images.githubusercontent.com/52920074/69060882-2a001d00-09e6-11ea-9c99-e8b79a143b4f.png">
+
+<img width="1048" alt="Screen Shot 2019-11-18 at 9 32 50 AM" src="https://user-images.githubusercontent.com/52920074/69061039-72b7d600-09e6-11ea-855e-57c7d163ca53.png">
+
 ## Author 
 Keerthi Mani
