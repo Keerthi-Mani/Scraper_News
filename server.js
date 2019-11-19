@@ -43,9 +43,13 @@ app.engine("handlebars", exphbs({
 app.set("view engine", "handlebars");
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://user:password1@ds061631.mlab.com:61631/heroku_cxjr7cw4", {
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/scraper_news";
+mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true
 });
+// mongoose.connect("mongodb://user:password1@ds061631.mlab.com:61631/heroku_cxjr7cw4", {
+//     useNewUrlParser: true
+// });
 
 // Routes
 //=========
@@ -99,7 +103,9 @@ app.get("/scrape", function (req, res) {
             // Add the text and href of every link, and save them as properties of the result object
             result.title = $(this).find("h2").text().trim();
             result.summary = summary;
-            result.link = $(this).children("a").attr("href");
+            result.link = "https://nytimes.com" + $(this).find("a").attr("href");
+
+            //result.link = $(this).children("a").attr("href");
 
             // Create a new Article using the `result` object built from scraping
             Article.insertMany(result).then(function (dbArticle) {
@@ -223,27 +229,29 @@ app.delete("/deleteNote/:note_id/:article_id", function (req, res) {
     }).then(function (err) {
         if (err) {
             console.log(err);
+        } else {
+            res.send(note);
         }
-        Article.deleteOne({
-            _id: req.params.article_id
-        }, {
-            $pull: [{
-                notes: req.params.note_id
-            }]
-            // Execute the above query
-        }).then(function (err) {
-            if (err) {
-                console.log(err);
-            } else {
-                res.send(note);
-            }
-            //     res.render("saved", {
-            //         article: dbArticle
-            //     }).catch(function (err) {
-            //         res.json(err);
-            //     });
+        // Article.deleteOne({
+        //     _id: req.params.article_id
+        // }, {
+        //     $pull: [{
+        //         notes: req.params.note_id
+        //     }]
+        //     // Execute the above query
+        // }).then(function (err) {
+        //     if (err) {
+        //         console.log(err);
+        //     } else {
+        //         res.send(note);
+        //     }
+        //     res.render("saved", {
+        //         article: dbArticle
+        //     }).catch(function (err) {
+        //         res.json(err);
+        //     });
 
-        });
+        // });
     });
 
 });
