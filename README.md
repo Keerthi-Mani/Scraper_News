@@ -22,6 +22,8 @@ An app that scrapes articles from the [New York Times](https://www.nytimes.com/)
     - cheerio
     - request
 
+## Link
+[Check the app](https://sleepy-brushlands-95387.herokuapp.com/saved)
 ## Screenshot
 <img width="1174" alt="Screen Shot 2019-11-17 at 8 38 53 PM" src="https://user-images.githubusercontent.com/52920074/69060882-2a001d00-09e6-11ea-9c99-e8b79a143b4f.png">
 
